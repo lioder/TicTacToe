@@ -1,0 +1,49 @@
+.grid-cell{
+    -fx-background-color: black;
+    -fx-background-insets: 1;
+}
+.grid-cell-lu{
+    -fx-background-color: black;
+    -fx-background-insets: 0 1 1 0;
+}
+.grid-cell-lc{
+    -fx-background-color: black;
+    -fx-background-insets: 1 1 1 0;
+}
+.grid-cell-lb{
+    -fx-background-color: black;
+    -fx-background-insets: 1 1 0 0;
+}
+.grid-cell-cb{
+    -fx-background-color: black;
+    -fx-background-insets: 1 1 0 1;
+}
+.grid-cell-rc{
+    -fx-background-color: black;
+    -fx-background-insets: 1 0 1 1;
+}
+.grid-cell-rb{
+    -fx-background-color: black;
+    -fx-background-insets: 1 0 0 1;
+}
+.grid-cell-ru{
+    -fx-background-color: black;
+    -fx-background-insets: 0 0 1 1;
+}.grid-cell-cu{
+     -fx-background-color: black;
+     -fx-background-insets: 0 1 1 1;
+ }
+.grid-cell-lc {
+    -fx-background-color: black;
+    -fx-background-insets: 1 1 1 0;
+}
+.result-label{
+    -fx-text-fill: white;
+    -fx-font-size: 20;
+    -fx-font-family: Helvetica;
+}
+.num-label{
+    -fx-text-fill: white;
+    -fx-font-size: 15;
+    -fx-font-family: Helvetica;
+}
