@@ -24,8 +24,9 @@ public class ChessBoard {
         //1.判断行
         for (int i = 0; i < 3; i++){
             if (!(chessboard[i][0].getPlayer().equals(Player.NONE)) && (chessboard[i][0].getPlayer().equals(chessboard[i][1].getPlayer())
-                    && chessboard[i][1].getPlayer().equals(chessboard[i][2].getPlayer())))
+                    && chessboard[i][1].getPlayer().equals(chessboard[i][2].getPlayer()))) {
                 return winner(chessboard[i][0].getPlayer());
+            }
         }
         //2.判断列
         for (int i = 0; i < 3; i++){

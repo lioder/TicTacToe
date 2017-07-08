@@ -1,3 +1,6 @@
+import javafx.animation.KeyFrame;
+import javafx.animation.KeyValue;
+import javafx.animation.Timeline;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.geometry.Pos;
@@ -8,6 +11,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.FlowPane;
+import javafx.util.Duration;
 
 import java.util.ArrayList;
 
@@ -34,17 +38,34 @@ public class Controller {
     public void handleChessAction(MouseEvent event){
         FlowPane pane = (FlowPane)event.getSource();
         String position = pane.getId().substring(1);
+        Image image = null;
+
         if (game.player.equals(Player.PLAYER_X)) {
-            pane.getChildren().add(new ImageView(new Image("img/x.png")));
+            image = new Image("img/cha.png");
             game.playChess(position);
             game.player = Player.PLAYER_O;
         }else if (game.player.equals(Player.PLAYER_O)){
-            pane.getChildren().add(new ImageView(new Image("img/o.png")));
+            image = new Image("img/quan.png");
             game.playChess(position);
             game.player = Player.PLAYER_X;
         }
+        ImageView imageView = new ImageView(image);
+        pane.getChildren().add(imageView);
+
         pane.setAlignment(Pos.CENTER);
         pane.setDisable(true);
+
+        //下棋动画
+        Timeline timeline = new Timeline();
+        timeline.getKeyFrames().addAll(
+                new KeyFrame(Duration.ZERO,
+                        new KeyValue(imageView.scaleXProperty(),0.1),
+                        new KeyValue(imageView.scaleYProperty(),0.1)),
+                new KeyFrame(new Duration(100),
+                        new KeyValue(imageView.scaleXProperty(),1.25),
+                        new KeyValue(imageView.scaleYProperty(),1.25)));
+        timeline.play();
+
         Result result = game.testResult();
         handleResult(result);
         if(!result.equals(Result.GAMING)){
