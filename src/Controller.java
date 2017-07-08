@@ -11,8 +11,15 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.FlowPane;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
 import javafx.util.Duration;
+import sun.audio.AudioPlayer;
+import sun.audio.AudioStream;
 
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 
 
@@ -39,15 +46,18 @@ public class Controller {
         FlowPane pane = (FlowPane)event.getSource();
         String position = pane.getId().substring(1);
         Image image = null;
+        String noteFileName = "";
 
         if (game.player.equals(Player.PLAYER_X)) {
             image = new Image("img/cha.png");
             game.playChess(position);
             game.player = Player.PLAYER_O;
+            noteFileName = "note-high.wav";
         }else if (game.player.equals(Player.PLAYER_O)){
             image = new Image("img/quan.png");
             game.playChess(position);
             game.player = Player.PLAYER_X;
+            noteFileName = "note-low.wav";
         }
         ImageView imageView = new ImageView(image);
         pane.getChildren().add(imageView);
@@ -65,6 +75,13 @@ public class Controller {
                         new KeyValue(imageView.scaleXProperty(),1.25),
                         new KeyValue(imageView.scaleYProperty(),1.25)));
         timeline.play();
+
+        try{
+            AudioStream as = new AudioStream(new FileInputStream("./src/"+noteFileName));
+            AudioPlayer.player.start(as);
+        }catch(IOException e){
+            e.printStackTrace();
+        }
 
         Result result = game.testResult();
         handleResult(result);
