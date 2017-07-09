@@ -17,6 +17,7 @@ import javafx.util.Duration;
 import sun.audio.AudioPlayer;
 import sun.audio.AudioStream;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -38,88 +39,134 @@ public class Controller {
     @FXML Label tieNum;
     @FXML Label oWinNum;
     Game game;
+
     public Controller(){
          game = new Game();
     }
+
+    /**
+     * 处理点击事件（根据游戏状态判断处理方式）
+     * 1.over 新建游戏
+     * 2.gaming 下棋
+     * @param event
+     */
     @FXML
     public void handleChessAction(MouseEvent event){
-        FlowPane pane = (FlowPane)event.getSource();
-        String position = pane.getId().substring(1);
-        Image image = null;
-        String noteFileName = "";
+        if (game.gameStatus.equals("over")){
+            game = new Game();
+            clearChess();
+        } else {
+            FlowPane pane = (FlowPane) event.getSource();
+            String position = pane.getId().substring(1);
+            Image image = null;
+            File musicFile = null;
 
-        if (game.player.equals(Player.PLAYER_X)) {
-            image = new Image("img/cha.png");
-            game.playChess(position);
-            game.player = Player.PLAYER_O;
-            noteFileName = "note-high.wav";
-        }else if (game.player.equals(Player.PLAYER_O)){
-            image = new Image("img/quan.png");
-            game.playChess(position);
-            game.player = Player.PLAYER_X;
-            noteFileName = "note-low.wav";
-        }
-        ImageView imageView = new ImageView(image);
-        pane.getChildren().add(imageView);
+            if (game.player.equals(Player.PLAYER_X)) {
+                image = new Image("img/cha.png");
+                game.playChess(position);
+                game.player = Player.PLAYER_O;
+                musicFile = new File("./src/note-high.wav");
+            } else if (game.player.equals(Player.PLAYER_O)) {
+                image = new Image("img/quan.png");
+                game.playChess(position);
+                game.player = Player.PLAYER_X;
+                musicFile = new File("./src/note-low.wav");
+            }
+            ImageView imageView = new ImageView(image);
+            pane.getChildren().add(imageView);
 
-        pane.setAlignment(Pos.CENTER);
-        pane.setDisable(true);
+            pane.setAlignment(Pos.CENTER);
+            pane.setDisable(true);
 
-        //下棋动画
-        Timeline timeline = new Timeline();
-        timeline.getKeyFrames().addAll(
-                new KeyFrame(Duration.ZERO,
-                        new KeyValue(imageView.scaleXProperty(),0.1),
-                        new KeyValue(imageView.scaleYProperty(),0.1)),
-                new KeyFrame(new Duration(100),
-                        new KeyValue(imageView.scaleXProperty(),1.25),
-                        new KeyValue(imageView.scaleYProperty(),1.25)));
-        timeline.play();
+            //下棋音乐
+            play(musicFile);
+            //下棋动画
+            Timeline timeline = new Timeline();
+            timeline.getKeyFrames().addAll(
+                    new KeyFrame(Duration.ZERO,
+                            new KeyValue(imageView.scaleXProperty(), 0.1),
+                            new KeyValue(imageView.scaleYProperty(), 0.1)),
+                    new KeyFrame(new Duration(100),
+                            new KeyValue(imageView.scaleXProperty(), 1.25),
+                            new KeyValue(imageView.scaleYProperty(), 1.25)));
+            timeline.play();
+            //下棋音乐
 
-        try{
-            AudioStream as = new AudioStream(new FileInputStream("./src/"+noteFileName));
-            AudioPlayer.player.start(as);
-        }catch(IOException e){
-            e.printStackTrace();
-        }
 
-        Result result = game.testResult();
-        handleResult(result);
-        if(!result.equals(Result.GAMING)){
-            endGame();
+            Result result = game.testResult();
+            handleResult(result);
+            if (!result.equals(Result.GAMING)) {
+                game.end();
+                endGame();
+            }
         }
 
     }
+
+    /**
+     * 根据result改变积分label，播放游戏结束音乐
+     * @param result
+     */
     private void handleResult(Result result){
         int num = 0;
         if (result.equals(Result.X_WIN)) {
             num = Integer.parseInt(xWinNum.getText());
             num++;
             xWinNum.setText(String.valueOf(num));
-//            game.end();
+            play(new File("./src/game-over.wav"));
         } else if (result.equals(Result.TIE)){
             num = Integer.parseInt(tieNum.getText());
             num++;
             tieNum.setText(String.valueOf(num));
-//            game.end();
+            play(new File("./src/game-over-tie.wav"));
         }  else if (result.equals(Result.O_WIN)) {
             num = Integer.parseInt(oWinNum.getText());
             num++;
             oWinNum.setText(String.valueOf(num));
-//            game.end();
+            play(new File("./src/game-over.wav"));
         }
     }
+
+    /**
+     * 将所有的棋子为设为可点击状态
+     */
     private void endGame(){
-//        for (FlowPane chess:list){
-            c11.setDisable(true);
-            c12.setDisable(true);
-            c13.setDisable(true);
-            c21.setDisable(true);
-            c22.setDisable(true);
-            c23.setDisable(true);
-            c31.setDisable(true);
-            c32.setDisable(true);
-            c33.setDisable(true);
-//        }
+            c11.setDisable(false);
+            c12.setDisable(false);
+            c13.setDisable(false);
+            c21.setDisable(false);
+            c22.setDisable(false);
+            c23.setDisable(false);
+            c31.setDisable(false);
+            c32.setDisable(false);
+            c33.setDisable(false);
+    }
+
+    /**
+     * 清除场上所有棋子
+     */
+    private void clearChess(){
+        c11.getChildren().clear();
+        c12.getChildren().clear();
+        c13.getChildren().clear();
+
+        c21.getChildren().clear();
+        c22.getChildren().clear();
+        c23.getChildren().clear();
+
+        c31.getChildren().clear();
+        c32.getChildren().clear();
+        c33.getChildren().clear();
+    }
+    /**
+     * 封装的音乐播放方法，根据name选择文件
+     */
+    private void play(File name){
+        try {
+            AudioStream as = new AudioStream(new FileInputStream(name));
+            AudioPlayer.player.start(as);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }
