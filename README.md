@@ -1,6 +1,7 @@
 # TicTacToe
 
-用 javaFX 写的 tictactoe 三子棋游戏
+tictactoe 三子棋（井字棋）游戏
+![img](http://imglf2.nosdn.127.net/img/QXU1RzFnM0s3QTMybTdOMlVuYXp1eDNQRHNvQ3V1SUcwUjNPZXpmZWczVk44TDR3SFMrMG1nPT0.jpg?imageView&thumbnail=500x0&quality=96&stripmeta=0&type=jpg)
 
 2017/7/9    v2.0
 
